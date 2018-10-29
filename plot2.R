@@ -1,0 +1,14 @@
+setwd("~/Documents/JH/TDI/TDI")
+microdata = read.csv("recs2015_public_v3.csv", header = T)
+microdata.cost = microdata[, c(1:6,631,674,694,708,713)]
+cost.uatyp = aggregate(x = microdata.cost[,c(7:11)], by = list(microdata.cost$UATYP10), FUN = "mean")
+cost.uatyp$uatyp = c("Urban Cluster", "Rural","Urban Area")
+
+colnames(cost.uatyp) = c("uaid", "Electricity", "Natural Gas", "Propane", "Fuel oil/kerosene", "Total", "uatyp")
+
+library(reshape)
+library(ggplot2)
+dat.m <- melt(cost.uatyp[,-c(1,6)],id.vars = "uatyp") 
+c <- ggplot(dat.m, aes(x = factor(uatyp), y = value, fill = variable))
+c + geom_bar(stat = "identity") + ylab("Annual Cost in 2015 (dollars)") + xlab("Urban Type") + theme(axis.text.y=element_text(size=15,colour = "black"),axis.text.x=element_text(size=13,colour = "black",angle=45, hjust=1),axis.title=element_text(size=13)) + ylim(c(0,3000)) + theme(legend.title = element_blank()) + theme(legend.text=element_text(size=13))
+
